@@ -7,10 +7,9 @@ import {
   AnimatePresence,
 } from 'framer-motion'
 import {
-  Briefcase, GraduationCap, Award, ChevronDown,
+  Briefcase, GraduationCap, ChevronDown,
   CheckCircle2, Download,
 } from 'lucide-react'
-//import { experience, certifications, siteConfig } from '@/data/content'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { useCountUp } from '@/hooks/useCountUp'
 import { experience, siteConfig } from '@/data/content'
@@ -19,29 +18,21 @@ import { experience, siteConfig } from '@/data/content'
 
 type WorkData      = Extract<typeof experience[number], { type: 'work' }>
 type EducationData = Extract<typeof experience[number], { type: 'education' }>
-//type CertData      = typeof certifications[number]
 
 type TimelineItem =
   | { kind: 'education'; year: string; data: EducationData }
-  | { kind: 'work';      year: string; data: WorkData;  isPresent?: boolean }
- // | { kind: 'cert';      year: string; data: CertData;  inProgress?: boolean }
+  | { kind: 'work';      year: string; data: WorkData; isPresent?: boolean }
 
 // ── Timeline entries ──────────────────────────────────────────────────────────
 
-const edu  = experience.find((e) => e.type === 'education')! as EducationData
-const ey   = experience.find((e) => e.type === 'work' && e.org.includes('Ernst'))! as WorkData
-const tcs  = experience.find((e) => e.type === 'work' && e.org.includes('Tata'))!  as WorkData
-// const ejpt = certifications.find((c) => c.name === 'eJPT')!
-// const sec  = certifications.find((c) => c.name === 'CompTIA Security+')!
-// const crtp = certifications.find((c) => c.name === 'CRTP')!
+const edu = experience.find((e) => e.type === 'education')! as EducationData
+const ey  = experience.find((e) => e.type === 'work' && e.org.includes('Ernst'))! as WorkData
+const tcs = experience.find((e) => e.type === 'work' && e.org.includes('Tata'))!  as WorkData
 
 const TIMELINE: TimelineItem[] = [
   { kind: 'education', year: '2018', data: edu },
   { kind: 'work',      year: '2022', data: ey },
   { kind: 'work',      year: '2023', data: tcs, isPresent: true },
-  // { kind: 'cert',      year: '2025', data: ejpt },
-  // { kind: 'cert',      year: '2026', data: sec },
-  // { kind: 'cert',      year: 'Next', data: crtp, inProgress: true },
 ]
 
 // ── Expanded card data ────────────────────────────────────────────────────────
@@ -59,11 +50,10 @@ const WORK_EXTRA: Record<string, { skills: string[]; metrics: string[] }> = {
 
 // ── Kind chip ─────────────────────────────────────────────────────────────────
 
-function KindChip({ kind }: { kind: 'work' | 'education'  }) {
+function KindChip({ kind }: { kind: 'work' | 'education' }) {
   const map = {
     education: { icon: <GraduationCap size={9} strokeWidth={2} />, label: 'Education' },
     work:      { icon: <Briefcase     size={9} strokeWidth={2} />, label: 'Experience' },
-   // cert:      { icon: <Award         size={9} strokeWidth={2} />, label: 'Certification' },
   }
   const { icon, label } = map[kind]
   return (
@@ -125,7 +115,7 @@ function WorkCard({
           </p>
           <p className="text-[12px] text-[var(--body)]">{data.period}</p>
           {!open && (
-            <p className="text-[12px] text-[var(--body)] italic line-clamp-1 pt-0.5">
+            <p className="text-[12px] text-[var(--body)] italic line-clamp-2 pt-0.5">
               {data.bullets[0]}
             </p>
           )}
@@ -169,7 +159,6 @@ function WorkCard({
                   </motion.li>
                 ))}
               </motion.ul>
-
               {extra && (
                 <div className="flex flex-wrap gap-1.5">
                   {extra.skills.map((s) => (
@@ -179,7 +168,6 @@ function WorkCard({
                   ))}
                 </div>
               )}
-
               {extra && (
                 <div className="flex flex-wrap gap-2">
                   {extra.metrics.map((m) => (
@@ -223,40 +211,6 @@ function EducationCard({ data, reduced }: { data: EducationData; reduced: boolea
   )
 }
 
-// ── Cert card ─────────────────────────────────────────────────────────────────
-
-// function CertCard({ data, inProgress, reduced }: { data: CertData; inProgress?: boolean; reduced: boolean }) {
-//   return (
-//     <motion.div
-//       whileHover={reduced ? {} : { y: -4, boxShadow: '0 8px 32px rgba(37,99,235,0.10)' }}
-//       transition={{ duration: 0.2 }}
-//       className={[
-//         'rounded-xl border px-5 py-4 flex items-center justify-between gap-4',
-//         'bg-[var(--surface)] border-[var(--border)]',
-//         inProgress ? '[border-style:dashed]' : '',
-//       ].join(' ')}
-//     >
-//       <div className="space-y-1.5 min-w-0">
-//         <KindChip kind="cert" />
-//         <p className="text-[15px] font-semibold text-[var(--heading)] leading-snug">{data.name}</p>
-//         {!inProgress && (
-//           <p className="text-[12px] font-medium text-[var(--primary)]">{data.issuer}</p>
-//         )}
-//         <p className="text-[12px] text-[var(--body)]">{data.year}</p>
-//       </div>
-//       {inProgress ? (
-//         <span className="flex-shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/50 whitespace-nowrap">
-//           In progress
-//         </span>
-//       ) : (
-//         <span className="flex-shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/50 whitespace-nowrap">
-//           Certified
-//         </span>
-//       )}
-//     </motion.div>
-//   )
-// }
-
 // ── Left column stat ──────────────────────────────────────────────────────────
 
 function StatNum({ value, suffix, label }: { value: number; suffix: string; label: string }) {
@@ -273,34 +227,23 @@ function StatNum({ value, suffix, label }: { value: number; suffix: string; labe
 
 // ── Section ───────────────────────────────────────────────────────────────────
 
+const RAIL_CENTER_MOBILE  = 20
+const RAIL_CENTER_DESKTOP = 108
+const NODE_HALF           = 28
+
 export default function ExperienceSection() {
-  // Read the actual OS/browser preference directly — do NOT use the global
-  // manual-override hook here, so dev testing never accidentally hides all motion.
   const reduced = useReducedMotion()
 
   const timelineRef = useRef<HTMLDivElement>(null)
-  const [lineH, setLineH] = useState(0)
+  const nodeRefs    = useRef<(HTMLDivElement | null)[]>([])
 
-  // Measure timeline height so the animated line fills it correctly.
-  // ResizeObserver keeps it accurate when cards expand/collapse.
-  useEffect(() => {
-    const el = timelineRef.current
-    if (!el) return
-    const ro = new ResizeObserver(() => setLineH(el.scrollHeight))
-    ro.observe(el)
-    setLineH(el.scrollHeight)
-    return () => ro.disconnect()
-  }, [])
+  const [nodesFilled, setNodesFilled] = useState<boolean[]>(TIMELINE.map(() => false))
 
-  // useScroll targets the timeline div (not the section) so the offset
-  // is relative to that element entering/leaving the viewport.
-  // No overflow:hidden or transform on any ancestor breaks this.
   const { scrollYProgress } = useScroll({
     target: timelineRef,
-    offset: ['start 80%', 'end 60%'],
+    offset: ['start 80%', 'end 20%'],
   })
 
-  // Smooth the raw scroll value so the line doesn't jump
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 60,
     damping: 20,
@@ -309,18 +252,53 @@ export default function ExperienceSection() {
 
   const lineScaleY = useTransform(smoothProgress, [0, 1], [0, 1])
 
+  useEffect(() => {
+    const computeThresholds = (): number[] => {
+      const container = timelineRef.current
+      if (!container) return TIMELINE.map(() => 0)
+      const containerTop = container.getBoundingClientRect().top + window.scrollY
+      const containerH   = container.scrollHeight
+      if (containerH === 0) return TIMELINE.map(() => 0)
+      return nodeRefs.current.map((el) => {
+        if (!el) return 0
+        const elTop      = el.getBoundingClientRect().top + window.scrollY
+        const nodeCenter = elTop - containerTop + el.offsetHeight / 2
+        return nodeCenter / containerH
+      })
+    }
+
+    let thresholds = computeThresholds()
+    const ro = new ResizeObserver(() => { thresholds = computeThresholds() })
+    if (timelineRef.current) ro.observe(timelineRef.current)
+
+    const unsub = smoothProgress.on('change', (v) => {
+      setNodesFilled(thresholds.map((t) => v >= t))
+    })
+
+    return () => { ro.disconnect(); unsub() }
+  }, [smoothProgress])
+
   return (
     <section id="experience" className="py-24 bg-[var(--bg)]">
-      {/* ── Present-dot CSS pulse (not affected by prefers-reduced-motion override) ── */}
       <style>{`
         @keyframes present-pulse {
           0%, 100% { opacity: 1; transform: scale(1); }
           50%       { opacity: 0.5; transform: scale(1.4); }
         }
         .present-dot { animation: present-pulse 1.8s ease-in-out infinite; }
-        @media (prefers-reduced-motion: reduce) {
-          .present-dot { animation: none; }
+        @media (prefers-reduced-motion: reduce) { .present-dot { animation: none; } }
+        @keyframes node-ring-pulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(37,99,235,0.45); }
+          60%       { box-shadow: 0 0 0 7px rgba(37,99,235,0); }
         }
+        .node-present-pulse { animation: node-ring-pulse 2.2s ease-out infinite; }
+        @media (prefers-reduced-motion: reduce) { .node-present-pulse { animation: none; } }
+        @keyframes node-next-pulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(91,155,255,0.35); }
+          60%       { box-shadow: 0 0 0 6px rgba(91,155,255,0); }
+        }
+        .node-next-pulse { animation: node-next-pulse 3s ease-out infinite; }
+        @media (prefers-reduced-motion: reduce) { .node-next-pulse { animation: none; } }
       `}</style>
 
       <div className="mx-auto w-full max-w-[1280px] px-5 sm:px-8">
@@ -385,38 +363,71 @@ export default function ExperienceSection() {
           </div>
 
           {/* ── Right timeline column ── */}
-          {/*
-            IMPORTANT: no overflow:hidden, no transform on this wrapper.
-            Both would break useScroll's IntersectionObserver tracking.
-          */}
           <div ref={timelineRef} className="relative">
 
-            {/* Grey base track — always visible */}
+            {/* Grey base track */}
             <div
-              className="absolute top-0 bottom-0 bg-[var(--border)]"
-              style={{ left: 17, width: 2 }}
+              className="absolute lg:hidden pointer-events-none bg-[var(--border)]"
+              style={{ left: RAIL_CENTER_MOBILE - 1, width: 2, top: NODE_HALF, bottom: NODE_HALF, zIndex: 0 }}
+              aria-hidden="true"
+            />
+            <div
+              className="absolute hidden lg:block pointer-events-none bg-[var(--border)]"
+              style={{ left: RAIL_CENTER_DESKTOP - 1, width: 2, top: NODE_HALF, bottom: NODE_HALF, zIndex: 0 }}
               aria-hidden="true"
             />
 
-            {/* Blue animated fill — scaleY from top, height set by ResizeObserver */}
-            {!reduced && lineH > 0 && (
-              <motion.div
-                className="absolute top-0 origin-top"
-                style={{
-                  left: 17,
-                  width: 2,
-                  height: lineH,
-                  scaleY: lineScaleY,
-                  background: 'linear-gradient(to bottom, var(--primary), color-mix(in srgb, var(--primary) 40%, transparent))',
-                }}
-                aria-hidden="true"
-              />
+            {/* Blue animated fill */}
+            {!reduced && (
+              <>
+                <motion.div
+                  className="absolute lg:hidden pointer-events-none origin-top"
+                  style={{
+                    left: RAIL_CENTER_MOBILE - 1, width: 2,
+                    top: NODE_HALF, bottom: NODE_HALF,
+                    scaleY: lineScaleY, zIndex: 1,
+                    background: 'linear-gradient(to bottom, var(--primary), color-mix(in srgb, var(--primary) 40%, transparent))',
+                  }}
+                  aria-hidden="true"
+                />
+                <motion.div
+                  className="absolute hidden lg:block pointer-events-none origin-top"
+                  style={{
+                    left: RAIL_CENTER_DESKTOP - 1, width: 2,
+                    top: NODE_HALF, bottom: NODE_HALF,
+                    scaleY: lineScaleY, zIndex: 1,
+                    background: 'linear-gradient(to bottom, var(--primary), color-mix(in srgb, var(--primary) 40%, transparent))',
+                  }}
+                  aria-hidden="true"
+                />
+              </>
             )}
 
-            {/* Timeline items */}
-            <div className="space-y-8">
+            {/* Timeline rows */}
+            <div className="space-y-6">
               {TIMELINE.map((item, i) => {
-                const isLast = i === TIMELINE.length - 1
+                const isLast    = i === TIMELINE.length - 1
+                const isPresent = item.kind === 'work' && (item as { isPresent?: boolean }).isPresent
+                const filled    = nodesFilled[i]
+
+                const nodeBase = [
+                  'w-14 h-14 rounded-full border-2',
+                  'flex items-center justify-center',
+                  'transition-colors duration-300',
+                  'bg-[var(--bg)]',
+                ].join(' ')
+
+                const nodeClass = isLast
+                  ? `${nodeBase} border-dashed ${
+                      filled
+                        ? 'border-[var(--primary)]/70 text-[var(--primary)]'
+                        : 'border-[var(--primary)]/40 text-[var(--primary)]/50'
+                    }${reduced ? '' : ' node-next-pulse'}`
+                  : filled
+                    ? `${nodeBase} border-[var(--primary)] !bg-[var(--primary)] text-white${
+                        isPresent && !reduced ? ' node-present-pulse' : ''
+                      }`
+                    : `${nodeBase} border-[var(--primary)]/40 text-[var(--primary)]/50`
 
                 return (
                   <motion.div
@@ -429,21 +440,22 @@ export default function ExperienceSection() {
                       delay: reduced ? 0 : i * 0.08,
                       ease: [0.22, 1, 0.36, 1],
                     }}
-                    className="relative flex items-start gap-6"
+                    className="grid items-start gap-x-4 [grid-template-columns:40px_1fr] lg:[grid-template-columns:64px_56px_1fr]"
                   >
-                    {/* Node + year label */}
-                    <div className="flex-shrink-0 flex flex-col items-center" style={{ width: 36 }}>
-                      {/* Dashed segment above CRTP node */}
-                      {isLast && (
-                        <div
-                          className="absolute border-l-2 border-dashed border-[var(--border)]"
-                          style={{ top: -32, left: 17, height: 32 }}
-                          aria-hidden="true"
-                        />
-                      )}
+                    {/* Year label — desktop only */}
+                    <div className="hidden lg:flex items-center justify-end h-14" aria-hidden="true">
+                      <span
+                        className="text-[11px] font-semibold tabular-nums whitespace-nowrap leading-none transition-colors duration-300"
+                        style={{ color: filled ? 'var(--heading)' : 'var(--body)' }}
+                      >
+                        {item.year}
+                      </span>
+                    </div>
 
-                      {/* Node */}
+                    {/* Rail cell */}
+                    <div className="flex items-start justify-center" style={{ zIndex: 2 }}>
                       <motion.div
+                        ref={(el) => { nodeRefs.current[i] = el }}
                         initial={reduced ? false : { scale: 0.6, opacity: 0 }}
                         whileInView={{ scale: 1, opacity: 1 }}
                         viewport={{ once: true, margin: '-80px' }}
@@ -454,47 +466,34 @@ export default function ExperienceSection() {
                           stiffness: 300,
                           damping: 18,
                         }}
-                        className={[
-                          'w-9 h-9 rounded-full border-2 flex items-center justify-center z-10 relative bg-[var(--surface)]',
-                          isLast
-                            ? 'border-dashed border-amber-400 text-amber-500'
-                            : 'border-[var(--primary)] text-[var(--primary)]',
-                        ].join(' ')}
+                        className={nodeClass}
                         aria-hidden="true"
                       >
-                        {item.kind === 'education' && <GraduationCap size={14} strokeWidth={2} />}
-                        {item.kind === 'work'      && <Briefcase      size={14} strokeWidth={2} />}
+                        {item.kind === 'education' && <GraduationCap size={16} strokeWidth={2} />}
+                        {item.kind === 'work'      && <Briefcase      size={16} strokeWidth={2} />}
                       </motion.div>
-
-                      {/* Year label below node */}
-                      <span className="mt-1.5 text-[10px] font-semibold text-[var(--body)] whitespace-nowrap leading-none">
-                        {item.year}
-                      </span>
                     </div>
 
-                    {/* Card — takes remaining width */}
-                    <div className="flex-1 min-w-0 pb-2">
+                    {/* Card */}
+                    <div className="min-w-0 pb-2">
                       {item.kind === 'education' && (
                         <EducationCard data={item.data} reduced={reduced} />
                       )}
                       {item.kind === 'work' && (
                         <WorkCard
                           data={item.data}
-                          isPresent={item.isPresent}
-                          defaultOpen={item.isPresent}
+                          isPresent={(item as { isPresent?: boolean }).isPresent}
+                          defaultOpen={(item as { isPresent?: boolean }).isPresent}
                           reduced={reduced}
                         />
                       )}
-                      {/* {item.kind === 'cert' && (
-                        <CertCard data={item.data} inProgress={item.inProgress} reduced={reduced} />
-                      )} */}
                     </div>
                   </motion.div>
                 )
               })}
             </div>
-          </div>
 
+          </div>
         </div>
       </div>
     </section>

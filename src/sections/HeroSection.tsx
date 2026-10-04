@@ -8,14 +8,19 @@ import StatsRow from '@/components/StatsRow'
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-const CHIPS = ['Web', 'API', 'Mobile', 'AI/LLM', 'Cloud']
+const CHIPS = ['Web', 'API', 'Mobile', 'AI/LLM', 'Cloud', 'Network']
 
-const CHIP_POSITIONS: React.CSSProperties[] = [
-  { top: '6%',  left: '-18%' },
-  { top: '26%', right: '-20%' },
-  { top: '52%', left: '-20%' },
-  { top: '70%', right: '-16%' },
-  { top: '86%', left: '8%' },
+// Tailwind class positions so chips can be repositioned per breakpoint.
+// Base = small screens (photo is 260px wide, so keep them close to the frame),
+// sm = tablet, lg = desktop (photo is 340px wide, allow them to overhang).
+const CHIP_POSITIONS: string[] = [
+  'top-[0%] left-[-2%] sm:top-[1%] sm:left-[-5%] lg:top-[2%] lg:left-[-3%]',
+  'top-[0%] right-[-2%] sm:top-[18%] sm:right-[-5%] lg:top-[3%] lg:right-[-1%]',
+  'top-[36%] left-[-6%] sm:top-[36%] sm:left-[-9%] lg:top-[36%] lg:left-[-11%]',
+  'top-[28%] right-[-3%] sm:top-[28%] sm:right-[-7%] lg:top-[28%] lg:right-[-9%]',
+  'top-[72%] left-[-8%] sm:top-[72%] sm:left-[-8%] lg:top-[72%] lg:left-[-9%]',
+  'top-[66%] right-[-3%] sm:top-[66%] sm:right-[-7%] lg:top-[66%] lg:right-[-9%]',
+
 ]
 
 const TRUST_BADGES = [
@@ -33,7 +38,7 @@ const FINDING_CARDS = [
     severity: 'High',
     severityColor: 'bg-red-500/15 text-red-500 border-red-500/30',
     endpoint: '/api/v1/users/{id}',
-    offset: { bottom: '-8%', left: '-22%' },
+    offset: 'bottom-[-6%] left-[-16%] sm:bottom-[-16%] sm:left-[-16%] lg:bottom-[-18%] lg:left-[-24%]',
     delay: 0,
   },
   {
@@ -42,7 +47,7 @@ const FINDING_CARDS = [
     severity: 'Medium',
     severityColor: 'bg-amber-500/15 text-amber-500 border-amber-500/30',
     endpoint: '/api/v1/auth/login',
-    offset: { bottom: '-8%', right: '-24%' },
+    offset: 'bottom-[-6%] right-[-18%] sm:bottom-[-16%] sm:right-[-18%] lg:bottom-[-18%] lg:right-[-26%]',
     delay: 1.4,
   },
 ]
@@ -97,8 +102,7 @@ function FindingCard({
 
   return (
     <motion.div
-      style={offset as React.CSSProperties}
-      className="absolute z-20 w-[168px] rounded-xl bg-[var(--surface)]/95 border border-[var(--border)] shadow-card-hover backdrop-blur-sm p-3"
+      className={`absolute z-20 max-sm:hidden w-[140px] sm:w-[168px] rounded-xl bg-[var(--surface)]/95 border border-[var(--border)] shadow-card-hover backdrop-blur-sm p-2 sm:p-3 ${offset}`}
       initial={reduced ? false : { opacity: 0, scale: 0.88 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, delay: reduced ? 0 : delay + 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -464,8 +468,7 @@ export default function HeroSection() {
                 {CHIPS.map((chip, i) => (
                   <motion.span
                     key={chip}
-                    style={CHIP_POSITIONS[i]}
-                    className="absolute touch-auto px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[var(--surface)]/95 border border-[var(--border)] text-[var(--primary)] shadow-card whitespace-nowrap backdrop-blur-sm"
+                    className={`absolute z-30 touch-auto px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[var(--surface)] border-2 border-[var(--primary)] text-[var(--primary)] shadow-card whitespace-nowrap ${CHIP_POSITIONS[i]}`}
                     animate={reduced ? {} : {
                       y: [0, i % 2 === 0 ? -7 : 7, 0],
                       rotate: [0, i % 2 === 0 ? 1.5 : -1.5, 0],

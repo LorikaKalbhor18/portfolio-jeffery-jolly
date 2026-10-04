@@ -1,4 +1,4 @@
-import { useId, useRef, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
   ArrowRight,
@@ -12,7 +12,7 @@ import {
   Sun,
 } from 'lucide-react'
 import { navLinks, siteConfig } from '@/data/content'
-import { setReducedMotion, useReducedMotion } from '@/hooks/useReducedMotion'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { useThemeContext } from '@/components/ThemeProvider'
 import Logo from '@/components/Logo'
 
@@ -98,25 +98,6 @@ function MagneticLink({
   )
 }
 
-function ReduceMotionSwitch({ reduced }: { reduced: boolean }) {
-  const id = useId()
-  return (
-    <div className="fbar-motion-control">
-      <span id={id} className="fbar-control-label">Reduce motion</span>
-      <button
-        type="button"
-        role="switch"
-        aria-labelledby={id}
-        aria-checked={reduced}
-        onClick={() => setReducedMotion(!reduced)}
-        className="fbar-motion-switch"
-      >
-        <span className="fbar-motion-switch__thumb" aria-hidden="true" />
-      </button>
-    </div>
-  )
-}
-
 export default function Footer() {
   const reduced = useReducedMotion()
   const { theme, toggle } = useThemeContext()
@@ -127,7 +108,7 @@ export default function Footer() {
       <div className="site-footer__inner">
 
         {/* ── Closing CTA card (unchanged) ──────────────────────────────── */}
-        <motion.div
+        {/* <motion.div
           className={`closing-card${reduced ? ' closing-card--static' : ''}`}
           initial={reduced ? false : { opacity: 0, scale: 0.975 }}
           whileInView={reduced ? undefined : { opacity: 1, scale: 1 }}
@@ -174,7 +155,7 @@ export default function Footer() {
               </a>
             </div>
           </div>
-        </motion.div>
+        </motion.div> */}
 
         {/* ── Redesigned footer bar ─────────────────────────────────────── */}
         <div className="fbar">
@@ -264,8 +245,6 @@ export default function Footer() {
               >
                 {isDark ? <Sun size={15} aria-hidden="true" /> : <Moon size={15} aria-hidden="true" />}
               </button>
-              <span className="fbar__ctrl-divider" aria-hidden="true" />
-              <ReduceMotionSwitch reduced={reduced} />
             </div>
           </div>
         </div>

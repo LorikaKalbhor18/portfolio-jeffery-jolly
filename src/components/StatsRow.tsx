@@ -24,10 +24,10 @@ function StatCard({
   return (
     <div
       ref={ref}
-      className="flex flex-col items-center text-center px-3 py-4 rounded-card bg-[var(--surface)] border border-[var(--border)] shadow-card"
+      className="hero-stat-card flex h-full flex-col items-center text-center px-3 py-4 rounded-card bg-[var(--surface)] border border-[var(--border)] shadow-card"
     >
       <span className="mb-1.5 text-[var(--primary)] opacity-70">{icon}</span>
-      <span className="text-2xl sm:text-3xl font-extrabold text-[var(--primary)] tabular-nums leading-none">
+      <span className="hero-stat-number font-extrabold text-[var(--primary)] tabular-nums leading-none">
         {count}{suffix}
       </span>
       <span className="mt-1.5 text-[11px] sm:text-xs text-[var(--body)] leading-snug max-w-[100px]">
@@ -39,7 +39,7 @@ function StatCard({
 
 export default function StatsRow() {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full">
+    <div className="hero-stats-grid grid grid-cols-2 lg:grid-cols-4 gap-3 w-full">
       {stats.map((s, i) => (
         <StatCard key={s.label} {...s} icon={ICONS[i]} />
       ))}

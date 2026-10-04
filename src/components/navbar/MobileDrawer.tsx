@@ -22,6 +22,8 @@ interface MobileDrawerProps {
   onNavigate: (href: string) => void
   onClose: () => void
   triggerRef: React.RefObject<HTMLButtonElement | null>
+  /** When false the links point back to the home page sections. */
+  onHomePage?: boolean
 }
 
 const SOCIAL_LINKS = [
@@ -39,6 +41,7 @@ export default function MobileDrawer({
   onNavigate,
   onClose,
   triggerRef,
+  onHomePage = true,
 }: MobileDrawerProps) {
   const drawerRef = useRef<HTMLDivElement>(null)
   const reduced = useReducedMotion()
@@ -157,7 +160,7 @@ export default function MobileDrawer({
                   }}
                 >
                   <a
-                    href={link.href}
+                    href={onHomePage ? link.href : '/' + link.href}
                     onClick={(e) => {
                       e.preventDefault()
                       handleNavClick(link.href)
