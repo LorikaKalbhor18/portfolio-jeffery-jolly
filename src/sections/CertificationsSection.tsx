@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Award, Trophy, Star, Shield, ChevronLeft, ChevronRight } from 'lucide-react'
 import { certifications, achievements } from '@/data/content'
@@ -50,12 +50,22 @@ function CertCarousel() {
   const [idx, setIdx] = useState(0)
   const [dir, setDir] = useState(1)
 
+  const paused = useRef(false)
+
   const go = (next: number) => {
     setDir(next > idx ? 1 : -1)
     setIdx((next + total) % total)
   }
   const prev = () => go(idx - 1)
   const next = () => go(idx + 1)
+
+  useEffect(() => {
+    if (reduced) return
+    const id = window.setInterval(() => {
+      if (!paused.current) setIdx((i) => (i + 1) % total)
+    }, 3000)
+    return () => window.clearInterval(id)
+  }, [reduced, total])
 
   const variants = {
     enter: (d: number) => ({ x: d * 60, opacity: 0 }),
@@ -72,7 +82,14 @@ function CertCarousel() {
   }
 
   return (
-    <div role="region" aria-label="Certifications carousel">
+    <div
+      role="region"
+      aria-label="Certifications carousel"
+      onMouseEnter={() => { paused.current = true }}
+      onMouseLeave={() => { paused.current = false }}
+      onFocusCapture={() => { paused.current = true }}
+      onBlurCapture={() => { paused.current = false }}
+    >
       {/* Track */}
       <div className="relative overflow-hidden rounded-card-lg" style={{ minHeight: 148 }}>
         <AnimatePresence initial={false} custom={dir} mode="wait">

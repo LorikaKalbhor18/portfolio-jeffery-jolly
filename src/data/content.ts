@@ -22,7 +22,7 @@ export const skillToolEntries: Record<string, SkillEntry> = {
   'JSON':         { type: 'img', src: `${CDN}/json/json-original.svg`, bg: 'bg-slate-50 dark:bg-slate-800/30' },
   'Nmap':         { type: 'icon', icon: Radar, color: '#4A90D9', bg: 'bg-blue-50 dark:bg-blue-950/30' },
   'SQLMap':       { type: 'icon', icon: Database, color: '#E74C3C', bg: 'bg-red-50 dark:bg-red-950/30' },
-  'Tenable.io':   { type: 'img', src: '/icons/tenable.svg', darkSrc: '/icons/tenable-dark.svg', bg: 'bg-emerald-50 dark:bg-emerald-950/30' },
+  'Tenable.io':   { type: 'img', src: '/icons/tenable.svg', darkSrc: '/icons/tenable-dark.svg', bg: 'bg-emerald-950/80 dark:bg-emerald-950/30' },
   'InsightAppSec':{ type: 'img', src: '/icons/insightappsec.svg', bg: 'bg-red-50 dark:bg-red-950/30' },
   'Gobuster':     { type: 'icon', icon: FolderSearch, color: '#6366F1', bg: 'bg-indigo-50 dark:bg-indigo-950/30' },
   'Hydra':        { type: 'img', src: '/icons/hydra.png', bg: 'bg-amber-50 dark:bg-amber-950/30' },

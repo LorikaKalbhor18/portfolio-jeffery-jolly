@@ -1,9 +1,10 @@
-import { useId, useRef, useState } from 'react'
+import { useId, useRef, useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
 import {
   ArrowUpRight,
   BookOpen,
+  Check,
   Copy,
   Download,
   Github,
@@ -18,6 +19,7 @@ import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 const formEndpoint = import.meta.env.VITE_FORM_ENDPOINT?.trim() ?? ''
+console.log('[ContactForm] endpoint:', formEndpoint || '(empty — mock mode)')
 const topics = ['Hiring', 'Collaboration', 'Security question', 'Other'] as const
 
 type Topic = (typeof topics)[number]
@@ -274,6 +276,7 @@ function ContactForm({
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    console.log('[ContactForm] handleSubmit fired, fields:', fields)
 
     if (fields.company.trim()) {
       showSuccess('Message sent.')
@@ -295,7 +298,7 @@ function ContactForm({
       return
     }
 
-    if (Date.now() - renderedAt.current < 3000) return
+    console.log('[ContactForm] elapsed ms:', Date.now() - renderedAt.current)
 
     const payload = {
       name: fields.name.trim(),
@@ -367,13 +370,13 @@ function ContactForm({
         <form onSubmit={handleSubmit} noValidate aria-busy={formState === 'submitting'} className="space-y-4">
           <input
             type="text"
-            name="company"
+            name="_gotcha"
             value={fields.company}
             onChange={(event) => setFields((current) => ({ ...current, company: event.target.value }))}
             tabIndex={-1}
             aria-hidden="true"
             autoComplete="off"
-            className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden"
+            style={{ display: 'none' }}
           />
 
           <FloatingInput
@@ -441,6 +444,7 @@ function ContactForm({
           <button
             type="submit"
             disabled={formState === 'submitting'}
+            onClick={() => console.log('[ContactForm] button clicked, formState:', formState)}
             className="btn-shine flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-hover)] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {formState === 'submitting' ? (
@@ -485,25 +489,83 @@ const contactFade = {
   visible: { opacity: 1, y: 0 },
 }
 
+type CopyState = 'idle' | 'copied' | 'failed'
+
+function EmailCopyButton({ email, reduced }: { email: string; reduced: boolean }) {
+  const [state, setState] = useState<CopyState>('idle')
+  const [tooltip, setTooltip] = useState(false)
+  const emailRef = useRef<HTMLAnchorElement>(null)
+  const timerRef = useRef<ReturnType<typeof setTimeout>>()
+  const reset = useCallback(() => setState('idle'), [])
+
+  async function handleCopy() {
+    clearTimeout(timerRef.current)
+    try {
+      await navigator.clipboard.writeText(email)
+      setState('copied')
+    } catch {
+      try {
+        const ta = document.createElement('textarea')
+        ta.value = email
+        ta.style.cssText = 'position:fixed;opacity:0'
+        document.body.appendChild(ta)
+        ta.focus()
+        ta.select()
+        const ok = document.execCommand('copy')
+        document.body.removeChild(ta)
+        if (ok) { setState('copied') } else {
+          setState('failed')
+          emailRef.current?.focus()
+        }
+      } catch {
+        setState('failed')
+      }
+    }
+    timerRef.current = setTimeout(reset, 1500)
+  }
+
+  const tooltipLabel = state === 'copied' ? 'Copied' : state === 'failed' ? 'Could not copy' : 'Copy email'
+
+  return (
+    <div className="relative flex items-center justify-center">
+      <span className="sr-only" aria-live="polite" aria-atomic="true">
+        {state === 'copied' ? 'Email address copied' : ''}
+      </span>
+      {(tooltip || state !== 'idle') && (
+        <span
+          role="tooltip"
+          className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-[var(--heading)] px-2 py-0.5 text-[10px] font-medium text-[var(--bg)] shadow z-10"
+        >
+          {tooltipLabel}
+        </span>
+      )}
+      <button
+        type="button"
+        aria-label="Copy email address"
+        onClick={handleCopy}
+        onMouseEnter={() => setTooltip(true)}
+        onMouseLeave={() => setTooltip(false)}
+        onFocus={() => setTooltip(true)}
+        onBlur={() => setTooltip(false)}
+        className="relative flex h-8 w-8 items-center justify-center rounded-full text-[var(--body)]/50 transition-colors hover:bg-[var(--pale-blue)] hover:text-[var(--primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)] focus-visible:bg-[var(--pale-blue)] focus-visible:text-[var(--primary)]"
+      >
+        <span className="absolute -inset-[6px]" aria-hidden="true" />
+        {state === 'copied'
+          ? <Check size={16} aria-hidden="true" className={['text-emerald-500', !reduced ? 'scale-in' : ''].join(' ')} />
+          : <Copy size={16} aria-hidden="true" />}
+      </button>
+    </div>
+  )
+}
+
 export default function ContactSection() {
   const reduced = useReducedMotion()
-  const [copied, setCopied] = useState(false)
   const [privacyOpen, setPrivacyOpen] = useState(false)
   const privacyLinkRef = useRef<HTMLAnchorElement>(null)
   const privacyDialogRef = useRef<HTMLDivElement>(null)
   const privacyDialogId = useId()
 
   useFocusTrap(privacyDialogRef, privacyOpen, privacyLinkRef)
-
-  async function copyEmail() {
-    try {
-      await navigator.clipboard.writeText(siteConfig.email)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 1800)
-    } catch {
-      setCopied(false)
-    }
-  }
 
   return (
     <motion.section
@@ -545,26 +607,21 @@ export default function ContactSection() {
                 </a>
               ))}
 
-              <div className="flex min-w-0 items-center gap-3 rounded-card border border-[var(--border)] bg-[var(--surface)] p-4 shadow-card">
+              <div className="relative flex min-w-0 items-center gap-3 rounded-card border border-[var(--border)] bg-[var(--surface)] py-4 pl-4 pr-[52px] shadow-card">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--pale-blue)] text-[var(--primary)]">
                   <Mail size={18} aria-hidden="true" />
                 </span>
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 overflow-hidden">
                   <p className="text-xs font-semibold text-[var(--heading)]">Email</p>
-                  <a href={`mailto:${siteConfig.email}`} className="break-all text-xs text-[var(--body)] hover:text-[var(--primary)]">
+                  <a
+                    href={`mailto:${siteConfig.email}`}
+                    className="block select-all whitespace-nowrap text-xs text-[var(--body)] hover:text-[var(--primary)]"
+                  >
                     {siteConfig.email}
                   </a>
                 </div>
-                <div className="flex shrink-0 flex-col items-end gap-1">
-                  <button
-                    type="button"
-                    onClick={copyEmail}
-                    className="inline-flex min-h-10 items-center gap-1 rounded-lg border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--primary)] transition-colors hover:border-[var(--primary)]/40 hover:bg-[var(--pale-blue)]"
-                  >
-                    <Copy size={12} aria-hidden="true" />
-                    {copied ? 'Copied' : 'Copy'}
-                  </button>
-                  <span className="sr-only" aria-live="polite">{copied ? 'Copied to clipboard.' : ''}</span>
+                <div className="absolute right-[10px] top-[10px]">
+                  <EmailCopyButton email={siteConfig.email} reduced={reduced} />
                 </div>
               </div>
             </div>

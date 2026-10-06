@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowRight, ArrowLeft, ChevronDown, CheckCircle, Home, ListChecks } from 'lucide-react'
+import { ArrowRight, ArrowLeft, ChevronDown, CheckCircle, Home } from 'lucide-react'
 import { projects, getProject } from '@/data/projects'
 import { projectIcon } from '@/lib/projectIcons'
+import { skillToolEntries } from '@/data/content'
+import type { SkillEntry } from '@/data/content'
+import { Wrench } from 'lucide-react'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import NotFoundPage from '@/pages/NotFoundPage'
 
@@ -105,6 +108,23 @@ function ProjectDetail({
 
   const tileStyle =
     'flex h-12 w-12 shrink-0 items-center justify-center rounded-card-lg bg-[var(--pale-blue)] text-[var(--primary)]'
+
+  function ToolEntryIcon({ entry }: { entry: SkillEntry | undefined }) {
+    if (!entry) return <Wrench size={16} aria-hidden="true" />
+    if (entry.type === 'img') {
+      if (entry.darkSrc) {
+        return (
+          <picture>
+            <source srcSet={entry.darkSrc} media="(prefers-color-scheme: dark)" />
+            <img src={entry.src} alt="" aria-hidden="true" className="h-4 w-4 object-contain" />
+          </picture>
+        )
+      }
+      return <img src={entry.src} alt="" aria-hidden="true" className="h-4 w-4 object-contain" />
+    }
+    const Icon = entry.icon
+    return <Icon size={16} color={entry.color} aria-hidden="true" />
+  }
 
   return (
     <article className="pt-[104px] pb-20 px-4 sm:px-6">
@@ -371,16 +391,19 @@ function ProjectDetail({
                 Tools
               </h2>
               <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {project.tools.map((tool) => (
+                {project.tools.map((tool) => {
+                  const entry = skillToolEntries[tool.name]
+                  const bg = entry?.bg ?? 'bg-[var(--pale-blue)]'
+                  return (
                   <li
                     key={tool.name}
                     className="rounded-card-lg border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors duration-200 hover:border-[var(--primary)]/25 hover:bg-[var(--pale-blue)]/30"
                   >
                     <span
-                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--pale-blue)] text-[var(--primary)]"
+                      className={`flex h-8 w-8 items-center justify-center rounded-lg ${bg}`}
                       aria-hidden="true"
                     >
-                      <ListChecks size={16} strokeWidth={1.75} />
+                      <ToolEntryIcon entry={entry} />
                     </span>
                     <p className="mt-2.5 text-[13px] font-semibold text-[var(--heading)]">
                       {tool.name}
@@ -389,7 +412,8 @@ function ProjectDetail({
                       {tool.use}
                     </p>
                   </li>
-                ))}
+                  )
+                })}
               </ul>
             </section>
 
@@ -447,9 +471,9 @@ function ProjectDetail({
                   />
                   Previous
                 </span>
-                <span className="mt-1.5 block text-[14px] font-semibold text-[var(--heading)]">
+                {/* <span className="mt-1.5 block text-[14px] font-semibold text-[var(--heading)]">
                   {prev.title}
-                </span>
+                </span> */}
               </Link>
 
               <Link
@@ -464,9 +488,9 @@ function ProjectDetail({
                     className="transition-transform group-hover:translate-x-0.5"
                   />
                 </span>
-                <span className="mt-1.5 block text-[14px] font-semibold text-[var(--heading)]">
+                {/* <span className="mt-1.5 block text-[14px] font-semibold text-[var(--heading)]">
                   {next.title}
-                </span>
+                </span> */}
               </Link>
             </nav>
           </div>
