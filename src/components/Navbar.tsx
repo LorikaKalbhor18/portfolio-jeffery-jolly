@@ -39,7 +39,7 @@ export default function Navbar() {
   // On a detail page the sections live on the home page, so links point there.
   const onHomePage = location.pathname === '/'
 
-  const { scrolled, hidden, progress } = useScrollDirection(drawerOpen)
+  const { scrolled, progress } = useScrollDirection(drawerOpen)
   const spyActive = useScrollSpy(SECTION_IDS)
   const active = onHomePage ? spyActive : 'projects'
 
