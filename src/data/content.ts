@@ -2,14 +2,14 @@
 import type { IconType } from 'react-icons'
 import { SiOwasp } from 'react-icons/si'
 import type { LucideIcon } from 'lucide-react'
-import { Brain, Database, FolderSearch, Gauge, KeyRound, Radar, ScanLine, Target, Webhook, Wrench } from 'lucide-react'
+import { Brain, Database, FolderSearch, Gauge, Radar, Target, Webhook, Wrench } from 'lucide-react'
 
 export type SkillIcon = IconType | LucideIcon
 
 const CDN = 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons'
 
 export type SkillEntry =
-  | { type: 'img'; src: string; bg?: string }
+  | { type: 'img'; src: string; darkSrc?: string; bg?: string }
   | { type: 'icon'; icon: SkillIcon; color: string; bg?: string }
 
 export const skillToolEntries: Record<string, SkillEntry> = {
@@ -22,10 +22,10 @@ export const skillToolEntries: Record<string, SkillEntry> = {
   'JSON':         { type: 'img', src: `${CDN}/json/json-original.svg`, bg: 'bg-slate-50 dark:bg-slate-800/30' },
   'Nmap':         { type: 'icon', icon: Radar, color: '#4A90D9', bg: 'bg-blue-50 dark:bg-blue-950/30' },
   'SQLMap':       { type: 'icon', icon: Database, color: '#E74C3C', bg: 'bg-red-50 dark:bg-red-950/30' },
-  'Tenable.io':   { type: 'img', src: '/icons/tenable.svg', bg: 'bg-emerald-50 dark:bg-emerald-950/30' },
-  'InsightAppSec':{ type: 'icon', icon: ScanLine, color: '#E8432D', bg: 'bg-red-50 dark:bg-red-950/30' },
+  'Tenable.io':   { type: 'img', src: '/icons/tenable.svg', darkSrc: '/icons/tenable-dark.svg', bg: 'bg-emerald-950/80 dark:bg-emerald-950/30' },
+  'InsightAppSec':{ type: 'img', src: '/icons/insightappsec.svg', bg: 'bg-red-50 dark:bg-red-950/30' },
   'Gobuster':     { type: 'icon', icon: FolderSearch, color: '#6366F1', bg: 'bg-indigo-50 dark:bg-indigo-950/30' },
-  'Hydra':        { type: 'icon', icon: KeyRound, color: '#F59E0B', bg: 'bg-amber-50 dark:bg-amber-950/30' },
+  'Hydra':        { type: 'img', src: '/icons/hydra.png', bg: 'bg-amber-50 dark:bg-amber-950/30' },
   'REST APIs':    { type: 'icon', icon: Webhook, color: '#10B981', bg: 'bg-emerald-50 dark:bg-emerald-950/30' },
 }
 
@@ -68,7 +68,7 @@ export const siteConfig = {
   linkedin: 'https://linkedin.com/in/jeffrey-jolly',
   github: 'https://github.com/jeffrey-jolly',
   medium: 'https://medium.com/@jeffryjolly',
-  resumeUrl: '/resume.pdf',
+  resumeUrl: '/images/Jeffrey_Jolly_2026_Sep.pdf',
 }
 
 const contactRetentionDays = 90
@@ -88,7 +88,7 @@ export const hero = {
   eyebrow: 'Penetration Tester | Cybersecurity Analyst',
   headlineLine1: 'Find Vulnerabilities.',
   headlineLine2: 'Build Safer Systems.',
-  roles: ['Penetration Tester', 'Cybersecurity Analyst', 'AI/LLM Security Tester'],
+  roles: ['Penetration Tester', 'Cybersecurity Analyst', 'LLM & AI Security Tester'],
   subline:
     'I help organisations identify, exploit and fix real-world vulnerabilities across Web, API, Mobile, Thick Client, Network, Cloud and AI/LLM systems.',
   ctaPrimary: 'View my work',
@@ -306,32 +306,7 @@ export const featuredProject = {
   chips: ['MDM Configuration', 'OS Hardening', 'App Security', 'Data Protection'],
 }
 
-export const projects = [
-  {
-    title: 'Web Application Security',
-    description:
-      'Manual and automated assessments following OWASP Top 10 methodology across diverse web application architectures.',
-    tags: ['OWASP Top 10', 'Burp Suite', 'DAST'],
-  },
-  {
-    title: 'API Security',
-    description:
-      'REST API assessments covering authentication, authorisation, injection and business logic flaws per OWASP API Top 10.',
-    tags: ['OWASP API Top 10', 'Postman', 'Burp Suite'],
-  },
-  {
-    title: 'Mobile Security',
-    description:
-      'iOS and Android application testing covering data storage, network communication and authentication per OWASP Mobile Top 10.',
-    tags: ['OWASP Mobile Top 10', 'iOS', 'Android'],
-  },
-  {
-    title: 'Thick Client Security',
-    description:
-      'Desktop application assessments targeting insecure storage, authentication flaws and sensitive data exposure.',
-    tags: ['Thick Client', 'Binary Analysis', 'Network Traffic'],
-  },
-]
+// Project content now lives in src/data/projects.ts
 
 export const education = {
   degree: 'B.Tech (Honours) Computer Science and Engineering',

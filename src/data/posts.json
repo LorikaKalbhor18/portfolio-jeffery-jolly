@@ -1,5 +1,33 @@
 [
   {
+    "id": "https://medium.com/p/436ef304ebe6",
+    "title": "EFB Penetration Testing Part 2 — The iPad Was Managed. So Naturally, I Tested the Management",
+    "excerpt": "What an EFB iPad, JAMF, network interception, and OS hardening taught me about testing security controls instead of trusting them. I hope you enjoyed reading Part 1. If not, her...",
+    "date": "2026-10-04",
+    "readTime": "13 min read",
+    "tags": [
+      "Efb Penetration Testing",
+      "Penetration Testing",
+      "Cybersecurity"
+    ],
+    "cover": "https://cdn-images-1.medium.com/max/1024/1*XfadZMJrtI84f2VVKORT0g.png",
+    "url": "https://medium.com/@jeffryjolly/the-ipad-was-managed-so-naturally-i-tested-the-management-part-2-436ef304ebe6?source=rss-c6c3ae57b1b9------2"
+  },
+  {
+    "id": "https://medium.com/p/5b20cf9ed0a0",
+    "title": "EFB Penetration Testing Part 1 — The EFB Looked Hardened. That Was the First Thing I Wanted to Test",
+    "excerpt": "What two EFB pentests taught me about attack surfaces, MDM, and testing security controls instead of trusting them. Now for the first “Question”.. https://medium.com/media/ee5d2...",
+    "date": "2026-10-03",
+    "readTime": "7 min read",
+    "tags": [
+      "Penetration Testing",
+      "Mobile Device Security",
+      "Aviation"
+    ],
+    "cover": "https://cdn-images-1.medium.com/max/1024/1*5VauvSQyhVwYVRKW6L-Z-A.jpeg",
+    "url": "https://medium.com/@jeffryjolly/the-efb-looked-hardened-that-was-the-first-thing-i-wanted-to-test-part-1-5b20cf9ed0a0?source=rss-c6c3ae57b1b9------2"
+  },
+  {
     "id": "https://medium.com/p/3884e9e99cca",
     "title": "Imposter Syndrome in Cybersecurity: Why AI Is Making It Feel Worse (and Why That’s Misleading)",
     "excerpt": "Ever found a vulnerability — and still felt like you just got lucky? It’s a strange feeling. You identify something valid, maybe even impactful, and yet there’s a voice in the b...",

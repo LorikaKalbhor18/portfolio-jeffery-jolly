@@ -34,6 +34,9 @@ export default {
           green: '#16A34A',
         },
       },
+      screens: {
+        '3xl': '1440px',
+      },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },

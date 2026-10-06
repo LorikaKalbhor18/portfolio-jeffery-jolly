@@ -5,18 +5,21 @@ type LogoProps = {
   showSubtitle?: boolean
   className?: string
   onClick?: MouseEventHandler<HTMLAnchorElement>
+  /** When false the logo points back to the home page. */
+  onHomePage?: boolean
 }
 
 export default function Logo({
   showSubtitle = true,
   className = '',
   onClick,
+  onHomePage = true,
 }: LogoProps) {
   const reduced = useReducedMotion()
 
   return (
     <a
-      href="#home"
+      href={onHomePage ? '#home' : '/'}
       onClick={onClick}
       aria-label="Jeffrey Jolly, home"
       className={`logo inline-flex flex-col items-start rounded-lg leading-none text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--primary,#2563EB)]${reduced ? ' logo--reduced' : ''} ${className}`}

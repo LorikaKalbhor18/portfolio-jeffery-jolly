@@ -49,8 +49,17 @@ const rowStyle = 'grid grid-cols-[32px_minmax(0,1fr)] items-center gap-x-3 gap-y
 
 function EntryIcon({ entry }: { entry: SkillEntry | undefined }) {
   if (!entry) return <Wrench size={20} aria-hidden="true" />
-  if (entry.type === 'img')
+  if (entry.type === 'img') {
+    if (entry.darkSrc) {
+      return (
+        <picture>
+          <source srcSet={entry.darkSrc} media="(prefers-color-scheme: dark)" />
+          <img src={entry.src} alt="" aria-hidden="true" className="h-5 w-5 object-contain" />
+        </picture>
+      )
+    }
     return <img src={entry.src} alt="" aria-hidden="true" className="h-5 w-5 object-contain" />
+  }
   const Icon = entry.icon
   return <Icon size={20} color={entry.color} aria-hidden="true" focusable="false" />
 }

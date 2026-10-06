@@ -74,7 +74,7 @@ export default function AboutSection() {
               {/* Photo card */}
               <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-[var(--pale-blue)] border-2 border-[var(--primary)]/30 shadow-card-hover">
                 <img
-                  src="/images/jeffrey-about.png"
+                  src="/images/jeffrey-about.jpeg"
                   alt="Illustrated portrait of Jeffrey Jolly standing in front of a flower wall"
                   className="w-full h-full object-cover"
                   onError={(e) => {

@@ -10,9 +10,10 @@ interface NavLinksProps {
   links: NavLink[]
   active: string
   onNavigate: (href: string) => void
+  /** When false the links point back to the home page sections (/ #about). */
+  onHomePage?: boolean
 }
-
-export default function NavLinks({ links, active, onNavigate }: NavLinksProps) {
+export default function NavLinks({ links, active, onNavigate, onHomePage = true }: NavLinksProps) {
   const reduced = useReducedMotion()
 
   return (
@@ -23,6 +24,8 @@ export default function NavLinks({ links, active, onNavigate }: NavLinksProps) {
       >
         {links.map((link) => {
           const isActive = active === link.href.slice(1)
+          // On a detail page the sections only exist on the home page.
+          const href = onHomePage ? link.href : '/' + link.href
           return (
             <li key={link.href} className="relative">
               {isActive && (
@@ -38,7 +41,7 @@ export default function NavLinks({ links, active, onNavigate }: NavLinksProps) {
                 />
               )}
               <a
-                href={link.href}
+                href={href}
                 onClick={(e) => {
                   e.preventDefault()
                   onNavigate(link.href)

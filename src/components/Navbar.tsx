@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { ArrowRight, Linkedin, Github, BookOpen } from 'lucide-react'
 import { useThemeContext } from '@/components/ThemeProvider'
 import { useScrollDirection } from '@/hooks/useScrollDirection'
@@ -32,9 +33,15 @@ export default function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const hamburgerRef = useRef<HTMLButtonElement>(null)
   const reduced = useReducedMotion()
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  // On a detail page the sections live on the home page, so links point there.
+  const onHomePage = location.pathname === '/'
 
   const { scrolled, hidden, progress } = useScrollDirection(drawerOpen)
-  const active = useScrollSpy(SECTION_IDS)
+  const spyActive = useScrollSpy(SECTION_IDS)
+  const active = onHomePage ? spyActive : 'projects'
 
   const navHeight = scrolled ? 58 : 72
 
@@ -42,9 +49,15 @@ export default function Navbar() {
 
   const handleNavigate = useCallback(
     (href: string) => {
-      scrollToSection(href, navHeight)
+      if (onHomePage) {
+        scrollToSection(href, navHeight)
+        return
+      }
+      // From a detail page, go to the home page then scroll to the section.
+      navigate('/' + href)
+      setDrawerOpen(false)
     },
-    [navHeight],
+    [navHeight, onHomePage, navigate],
   )
 
   return (
@@ -57,7 +70,7 @@ export default function Navbar() {
           'transition-transform',
           reduced ? '' : 'duration-300',
           // Hide/show
-          hidden && !drawerOpen ? '-translate-y-full' : 'translate-y-0',
+          'translate-y-0',
         ].join(' ')}
         style={{
           // Translucent + blur always; shadow only when scrolled
@@ -91,14 +104,20 @@ export default function Navbar() {
           {/* ── Brand ── */}
           <Logo
             className="shrink-0"
+            onHomePage={onHomePage}
             onClick={(event) => {
               event.preventDefault()
-              handleNavigate('#home')
+              if (onHomePage) {
+                handleNavigate('#home')
+              } else {
+                navigate('/')
+                setDrawerOpen(false)
+              }
             }}
           />
 
           {/* ── Desktop center links ── */}
-          <NavLinks links={navLinks} active={active} onNavigate={handleNavigate} />
+          <NavLinks links={navLinks} active={active} onNavigate={handleNavigate} onHomePage={onHomePage} />
 
           {/* ── Right cluster ── */}
           <div className="flex items-center gap-0.5">
@@ -208,6 +227,7 @@ export default function Navbar() {
         onToggleTheme={toggle}
         onNavigate={handleNavigate}
         onClose={closeDrawer}
+        onHomePage={onHomePage}
         triggerRef={hamburgerRef}
       />
     </>

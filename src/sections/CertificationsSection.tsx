@@ -1,24 +1,34 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
-import { motion } from 'framer-motion'
-import { Award, Trophy, Star, Shield } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Award, Trophy, Star, Shield, ChevronLeft, ChevronRight } from 'lucide-react'
 import { certifications, achievements } from '@/data/content'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 // ── Cert card ─────────────────────────────────────────────────────────────────
 
 function CertCard({ cert }: { cert: (typeof certifications)[number] }) {
+  const certImg: Record<string, string> = {
+    'eJPT': '/images/ejpt-certification.svg',
+    'Ethical Hacking Associate': '/images/eha-certification..png',
+    'CompTIA Security+': '/images/blob.png',
+    'CRTP': '/images/crtp.png',
+  }
+  const img = certImg[cert.name]
   return (
-    <div className="flex-none w-64 sm:w-72 flex flex-col gap-3 p-5 rounded-card-lg bg-[var(--surface)] border border-[var(--border)] shadow-card select-none">
+    <div className="flex flex-col gap-3 p-5 rounded-card-lg bg-[var(--surface)] border border-[var(--border)] shadow-card h-full">
       <div className="flex items-start justify-between gap-2">
-        <div className="w-10 h-10 rounded-lg bg-[var(--pale-blue)] flex items-center justify-center flex-shrink-0">
-          <Shield size={20} className="text-[var(--primary)]" />
+        <div className="w-10 h-10 rounded-lg bg-[var(--pale-blue)] flex items-center justify-center flex-shrink-0 overflow-hidden">
+          {img
+            ? <img src={img} alt={cert.name} className="w-8 h-8 object-contain" />
+            : <Shield size={20} className="text-[var(--primary)]" />
+          }
         </div>
         {cert.inProgress ? (
-          <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-100 dark:bg-amber-900/30 text-[#F59E0B] border border-amber-200 dark:border-amber-800 whitespace-nowrap">
+          <span className="touch-auto px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-100 dark:bg-amber-900/30 text-[#F59E0B] border border-amber-200 dark:border-amber-800 whitespace-nowrap">
             In progress
           </span>
         ) : (
-          <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-green-100 dark:bg-green-900/30 text-[#16A34A] border border-green-200 dark:border-green-800 whitespace-nowrap">
+          <span className="touch-auto px-2.5 py-1 rounded-full text-[10px] font-semibold bg-green-100 dark:bg-green-900/30 text-[#16A34A] border border-green-200 dark:border-green-800 whitespace-nowrap">
             Certified
           </span>
         )}
@@ -32,81 +42,121 @@ function CertCard({ cert }: { cert: (typeof certifications)[number] }) {
   )
 }
 
-// ── Auto-scroll carousel ──────────────────────────────────────────────────────
+// ── Carousel ──────────────────────────────────────────────────────────────────
 
 function CertCarousel() {
   const reduced = useReducedMotion()
-  const trackRef = useRef<HTMLDivElement>(null)
-  const [paused, setPaused] = useState(false)
-  const rafRef = useRef<number>(0)
-  const posRef = useRef(0)
+  const total = certifications.length
+  const [idx, setIdx] = useState(0)
+  const [dir, setDir] = useState(1)
 
-  // Duplicate cards for seamless loop
-  const doubled = [...certifications, ...certifications]
+  const paused = useRef(false)
 
-  const scroll = useCallback(() => {
-    const track = trackRef.current
-    if (!track || paused) {
-      rafRef.current = requestAnimationFrame(scroll)
-      return
-    }
-    posRef.current += 0.5
-    const half = track.scrollWidth / 2
-    if (posRef.current >= half) posRef.current = 0
-    track.style.transform = `translateX(-${posRef.current}px)`
-    rafRef.current = requestAnimationFrame(scroll)
-  }, [paused])
+  const go = (next: number) => {
+    setDir(next > idx ? 1 : -1)
+    setIdx((next + total) % total)
+  }
+  const prev = () => go(idx - 1)
+  const next = () => go(idx + 1)
 
   useEffect(() => {
     if (reduced) return
-    rafRef.current = requestAnimationFrame(scroll)
-    const onVisibility = () => {
-      if (document.hidden) cancelAnimationFrame(rafRef.current)
-      else rafRef.current = requestAnimationFrame(scroll)
-    }
-    document.addEventListener('visibilitychange', onVisibility)
-    return () => {
-      cancelAnimationFrame(rafRef.current)
-      document.removeEventListener('visibilitychange', onVisibility)
-    }
-  }, [reduced, scroll])
+    const id = window.setInterval(() => {
+      if (!paused.current) setIdx((i) => (i + 1) % total)
+    }, 3000)
+    return () => window.clearInterval(id)
+  }, [reduced, total])
 
-  const pause = () => setPaused(true)
-  const resume = () => setPaused(false)
+  const variants = {
+    enter: (d: number) => ({ x: d * 60, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit:  (d: number) => ({ x: d * -60, opacity: 0 }),
+  }
+
+  if (reduced) {
+    return (
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {certifications.map((c) => <CertCard key={c.name} cert={c} />)}
+      </div>
+    )
+  }
 
   return (
     <div
       role="region"
       aria-label="Certifications carousel"
-      className="overflow-hidden"
-      onMouseEnter={pause}
-      onMouseLeave={resume}
-      onFocus={pause}
-      onBlur={resume}
-      onTouchStart={pause}
-      onTouchEnd={resume}
+      onMouseEnter={() => { paused.current = true }}
+      onMouseLeave={() => { paused.current = false }}
+      onFocusCapture={() => { paused.current = true }}
+      onBlurCapture={() => { paused.current = false }}
     >
-      {reduced ? (
-        // Static grid for reduced motion
-        <div className="flex flex-wrap gap-4 justify-center px-4">
-          {certifications.map((c) => <CertCard key={c.name} cert={c} />)}
-        </div>
-      ) : (
-        <div className="relative">
-          {/* Fade edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-r from-[var(--bg-alt)] to-transparent pointer-events-none" aria-hidden="true" />
-          <div className="absolute right-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-l from-[var(--bg-alt)] to-transparent pointer-events-none" aria-hidden="true" />
-          <div
-            ref={trackRef}
-            className="flex gap-4 py-2 will-change-transform"
-            style={{ width: 'max-content' }}
+      {/* Track */}
+      <div className="relative overflow-hidden rounded-card-lg" style={{ minHeight: 148 }}>
+        <AnimatePresence initial={false} custom={dir} mode="wait">
+          <motion.div
+            key={idx}
+            custom={dir}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.15}
+            onDragEnd={(_, info) => {
+              if (info.offset.x < -40) next()
+              else if (info.offset.x > 40) prev()
+            }}
+            className="cursor-grab active:cursor-grabbing select-none"
           >
-            {doubled.map((cert, i) => (
-              <CertCard key={`${cert.name}-${i}`} cert={cert} />
-            ))}
-          </div>
+            <CertCard cert={certifications[idx]} />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Controls */}
+      <div className="flex items-center justify-between mt-4">
+        {/* Prev */}
+        <button
+          onClick={prev}
+          aria-label="Previous certification"
+          className="w-9 h-9 min-w-0 min-h-0 flex items-center justify-center rounded-lg border border-[var(--border)] text-[var(--body)] hover:text-[var(--primary)] hover:border-[var(--primary)] hover:bg-[var(--pale-blue)] transition-colors"
+        >
+          <ChevronLeft size={16} strokeWidth={2} />
+        </button>
+
+        {/* Dots */}
+        <div className="flex items-center gap-2" aria-hidden="true">
+          {certifications.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => go(i)}
+              aria-label={`Go to certification ${i + 1}`}
+              className={[
+                'touch-auto min-w-0 min-h-0 h-2 rounded-full transition-all duration-250',
+                i === idx
+                  ? 'w-6 bg-[var(--primary)]'
+                  : 'w-2 bg-[var(--border)] hover:bg-[var(--primary)]/50',
+              ].join(' ')}
+            />
+          ))}
         </div>
-      )}
+
+        {/* Next */}
+        <button
+          onClick={next}
+          aria-label="Next certification"
+          className="w-9 h-9 min-w-0 min-h-0 flex items-center justify-center rounded-lg border border-[var(--border)] text-[var(--body)] hover:text-[var(--primary)] hover:border-[var(--primary)] hover:bg-[var(--pale-blue)] transition-colors"
+        >
+          <ChevronRight size={16} strokeWidth={2} />
+        </button>
+      </div>
+
+      {/* Counter */}
+      <p className="text-center text-[11px] tabular-nums text-[var(--body)] mt-2">
+        {idx + 1} / {total}
+      </p>
     </div>
   )
 }
@@ -115,8 +165,8 @@ function CertCarousel() {
 
 const ACHIEVEMENT_ICONS = [
   <Trophy size={18} className="text-[#F59E0B]" />,
-  <Award size={18} className="text-[var(--primary)]" />,
-  <Star size={18} className="text-[#F59E0B]" />,
+  <Award  size={18} className="text-[var(--primary)]" />,
+  <Star   size={18} className="text-[#F59E0B]" />,
 ]
 const ACHIEVEMENT_BG = [
   'bg-amber-100 dark:bg-amber-900/30',
@@ -141,6 +191,7 @@ export default function CertificationsSection() {
   return (
     <section id="certifications" className="py-20 bg-[var(--bg-alt)]">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
+
         {/* Header */}
         <div className="mb-10 text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-[var(--primary)] mb-2">
@@ -150,37 +201,40 @@ export default function CertificationsSection() {
             Certifications & achievements
           </h2>
         </div>
-      </div>
 
-      {/* Cert carousel — full bleed */}
-      <CertCarousel />
+        {/* Carousel — constrained width so it doesn't stretch full page */}
+        <div className="mx-auto max-w-sm">
+          <CertCarousel />
+        </div>
 
-      {/* Achievements */}
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 mt-16">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--body)] mb-6 text-center">
-          Highlights
-        </p>
-        <motion.div
-          variants={reduced ? undefined : container}
-          initial={reduced ? false : 'hidden'}
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          className="grid sm:grid-cols-3 gap-4"
-        >
-          {achievements.map((a, i) => (
-            <motion.div
-              key={a.title}
-              variants={reduced ? undefined : item}
-              className="flex flex-col gap-3 p-5 rounded-card-lg bg-[var(--surface)] border border-[var(--border)] shadow-card"
-            >
-              <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${ACHIEVEMENT_BG[i]}`}>
-                {ACHIEVEMENT_ICONS[i]}
-              </div>
-              <p className="font-bold text-[var(--heading)] text-sm leading-snug">{a.title}</p>
-              <p className="text-xs text-[var(--body)] leading-relaxed">{a.description}</p>
-            </motion.div>
-          ))}
-        </motion.div>
+        {/* Achievements */}
+        <div className="mt-16">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[var(--body)] mb-6 text-center">
+            Highlights
+          </p>
+          <motion.div
+            variants={reduced ? undefined : container}
+            initial={reduced ? false : 'hidden'}
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            className="grid sm:grid-cols-3 gap-4"
+          >
+            {achievements.map((a, i) => (
+              <motion.div
+                key={a.title}
+                variants={reduced ? undefined : item}
+                className="flex flex-col gap-3 p-5 rounded-card-lg bg-[var(--surface)] border border-[var(--border)] shadow-card"
+              >
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${ACHIEVEMENT_BG[i]}`}>
+                  {ACHIEVEMENT_ICONS[i]}
+                </div>
+                <p className="font-bold text-[var(--heading)] text-sm leading-snug">{a.title}</p>
+                <p className="text-xs text-[var(--body)] leading-relaxed">{a.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+
       </div>
     </section>
   )
