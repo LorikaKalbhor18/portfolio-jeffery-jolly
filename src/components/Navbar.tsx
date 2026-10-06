@@ -70,7 +70,7 @@ export default function Navbar() {
           'transition-transform',
           reduced ? '' : 'duration-300',
           // Hide/show
-          'translate-y-0',
+          hidden && !drawerOpen ? '-translate-y-full' : 'translate-y-0',
         ].join(' ')}
         style={{
           // Translucent + blur always; shadow only when scrolled

@@ -1,33 +1,16 @@
-import { useRef, useEffect } from 'react'
-import { motion } from 'framer-motion'
 import {
-  ArrowRight,
   BookOpen,
   Download,
   Github,
   Linkedin,
   Mail,
   Moon,
-  Shield,
   Sun,
 } from 'lucide-react'
 import { navLinks, siteConfig } from '@/data/content'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { useThemeContext } from '@/components/ThemeProvider'
 import Logo from '@/components/Logo'
-
-// ── Closing-card network geometry (unchanged) ────────────────────────────────
-const networkDots = [
-  [75, 70], [180, 145], [300, 80], [430, 185], [560, 105], [720, 195],
-  [850, 80], [1010, 160], [1135, 75], [940, 285], [690, 310], [360, 300],
-]
-const networkLines = [
-  [75, 70, 180, 145], [180, 145, 300, 80], [300, 80, 430, 185],
-  [430, 185, 560, 105], [560, 105, 720, 195], [720, 195, 850, 80],
-  [850, 80, 1010, 160], [1010, 160, 1135, 75], [430, 185, 360, 300],
-  [430, 185, 690, 310], [720, 195, 690, 310], [720, 195, 940, 285],
-  [1010, 160, 940, 285],
-]
 
 // ── Footer bar background network geometry ───────────────────────────────────
 const barDots: [number, number][] = [
@@ -51,51 +34,6 @@ function scrollTo(id: string, reduced: boolean) {
     top: element.getBoundingClientRect().top + window.scrollY - 72,
     behavior: reduced ? 'instant' : 'smooth',
   })
-}
-
-function MagneticLink({
-  href,
-  children,
-  reduced,
-  variant,
-  download,
-}: {
-  href: string
-  children: React.ReactNode
-  reduced: boolean
-  variant: 'primary' | 'outline'
-  download?: boolean
-}) {
-  const linkRef = useRef<HTMLAnchorElement>(null)
-
-  function moveMagnetically(event: React.PointerEvent<HTMLAnchorElement>) {
-    if (reduced || event.pointerType !== 'mouse' || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
-    const bounds = event.currentTarget.getBoundingClientRect()
-    const offsetX = ((event.clientX - bounds.left) / bounds.width - 0.5) * 8
-    const offsetY = ((event.clientY - bounds.top) / bounds.height - 0.5) * 6
-    event.currentTarget.style.transform = `translate(${offsetX}px, ${offsetY}px)`
-  }
-
-  function resetMagnet() {
-    if (linkRef.current) linkRef.current.style.transform = ''
-  }
-
-  useEffect(() => { if (reduced) resetMagnet() }, [reduced])
-
-  return (
-    <a
-      ref={linkRef}
-      href={href}
-      download={download}
-      className={`closing-action closing-action--${variant}${variant === 'primary' && !reduced ? ' closing-email' : ''}`}
-      style={{ transition: reduced ? 'none' : 'transform 220ms ease', willChange: reduced ? 'auto' : 'transform' }}
-      onPointerMove={moveMagnetically}
-      onPointerLeave={resetMagnet}
-      onBlur={resetMagnet}
-    >
-      {children}
-    </a>
-  )
 }
 
 export default function Footer() {

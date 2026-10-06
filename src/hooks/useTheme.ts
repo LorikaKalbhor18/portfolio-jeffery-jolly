@@ -6,7 +6,7 @@ function getInitialTheme(): Theme {
   try {
     const stored = localStorage.getItem('theme') as Theme | null
     if (stored === 'light' || stored === 'dark') return stored
-  } catch (_) {}
+  } catch { /* localStorage unavailable */ }
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
@@ -23,7 +23,7 @@ export function useTheme() {
     root.setAttribute('data-theme', theme)
     try {
       localStorage.setItem('theme', theme)
-    } catch (_) {}
+    } catch { /* localStorage unavailable */ }
   }, [theme])
 
   const toggle = useCallback(() => {

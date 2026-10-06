@@ -42,10 +42,10 @@ export function useFocusTrap(
     }
 
     document.addEventListener('keydown', onKeyDown)
+    const returnEl = returnRef?.current
     return () => {
       document.removeEventListener('keydown', onKeyDown)
-      // Return focus to trigger element
-      returnRef?.current?.focus()
+      returnEl?.focus()
     }
   }, [active, containerRef, returnRef])
 }

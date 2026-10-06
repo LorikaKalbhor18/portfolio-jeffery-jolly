@@ -67,6 +67,8 @@ function ProjectDetail({
     h1Ref.current?.focus()
   }, [project.slug])
 
+  const phaseIdKey = phaseIds.join(',')
+
   // Scroll spy over the three sections and the six phases.
   useEffect(() => {
     const ids = [...SECTIONS.map((s) => s.id), ...phaseIds]
@@ -92,7 +94,7 @@ function ProjectDetail({
     }
     window.addEventListener('scroll', handler, { passive: true })
     return () => window.removeEventListener('scroll', handler)
-  }, [project.slug, phaseIds.join(',')])
+  }, [project.slug, phaseIdKey, phaseIds])
 
   const jump = (id: string) => {
     const el = document.getElementById(id)
