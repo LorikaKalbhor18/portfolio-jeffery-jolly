@@ -10,7 +10,7 @@ export default function IntroOverlay() {
   useEffect(() => {
     try {
       if (sessionStorage.getItem(SESSION_KEY)) return
-    } catch (_) {}
+    } catch { /* sessionStorage unavailable */ }
     setVisible(true)
     const timer = setTimeout(() => dismiss(), 1150)
     return () => clearTimeout(timer)
@@ -20,7 +20,7 @@ export default function IntroOverlay() {
     setLeaving(true)
     setTimeout(() => {
       setVisible(false)
-      try { sessionStorage.setItem(SESSION_KEY, '1') } catch (_) {}
+      try { sessionStorage.setItem(SESSION_KEY, '1') } catch { /* sessionStorage unavailable */ }
     }, 300)
   }
 
