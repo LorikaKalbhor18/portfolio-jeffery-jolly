@@ -1,0 +1,18 @@
+# Jeffrey Jolly — Penetration Tester & Cybersecurity Analyst
+
+> Portfolio site for Jeffrey Jolly, a penetration tester and cybersecurity analyst based in Bhubaneswar, India.
+
+## About
+Jeffrey has 4+ years of experience in VAPT across web, API, mobile, thick client, network, cloud and AI/LLM systems. Currently a Cybersecurity Analyst at Tata Consultancy Services.
+
+## Pages
+- [Home](https://portfolio-jeffery-jolly.vercel.app/)
+- [Web Application Security](https://portfolio-jeffery-jolly.vercel.app/projects/web-application-security)
+- [API Security](https://portfolio-jeffery-jolly.vercel.app/projects/api-security)
+- [Mobile Security](https://portfolio-jeffery-jolly.vercel.app/projects/mobile-security)
+- [Thick Client Security](https://portfolio-jeffery-jolly.vercel.app/projects/thick-client-security)
+- [Cloud Security](https://portfolio-jeffery-jolly.vercel.app/projects/cloud-security)
+- [AI / LLM Security](https://portfolio-jeffery-jolly.vercel.app/projects/ai-llm-security)
+
+## Contact
+Email: jeffryjolly@gmail.com

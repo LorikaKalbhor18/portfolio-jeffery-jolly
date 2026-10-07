@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://portfolio-jeffery-jolly.vercel.app/sitemap.xml
