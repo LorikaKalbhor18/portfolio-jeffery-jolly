@@ -48,12 +48,12 @@ function PostCard({ post, index }: { post: Post; index: number }) {
             <span className="text-xs text-[var(--body)]">cover image</span>
           </div>
         )}
-        {/* Tag pill overlay */}
+        {/* Tag pill overlay
         {post.tags[0] && (
           <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-[var(--surface)]/90 text-[var(--primary)] border border-[var(--border)]">
             {post.tags[0]}
           </span>
-        )}
+        )} */}
       </div>
 
       {/* Body */}
