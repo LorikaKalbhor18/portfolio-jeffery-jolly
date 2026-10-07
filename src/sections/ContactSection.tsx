@@ -17,10 +17,13 @@ import {
 import { contactPrivacy, siteConfig } from '@/data/content'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { useCaptcha, captchaEnabled } from '@/hooks/useCaptcha'
+import { CaptchaField } from '@/components/CaptchaField'
 
 const formEndpoint = import.meta.env.VITE_FORM_ENDPOINT?.trim() ?? ''
-console.log('[ContactForm] endpoint:', formEndpoint || '(empty — mock mode)')
+const CONTACT_API = '/api/contact'
 const topics = ['Hiring', 'Collaboration', 'Security question', 'Other'] as const
+const SESSION_LIMIT = 3
 
 type Topic = (typeof topics)[number]
 type EditableField = 'name' | 'email' | 'message'
@@ -224,7 +227,10 @@ function ContactForm({
   const [touched, setTouched] = useState<Record<EditableField, boolean>>({ name: false, email: false, message: false })
   const [formState, setFormState] = useState<FormState>('idle')
   const [announcement, setAnnouncement] = useState('')
+  const [submitCount, setSubmitCount] = useState(0)
+  const [captchaError, setCaptchaError] = useState('')
   const renderedAt = useRef(Date.now())
+  const { containerRef: captchaRef, token: captchaToken, reset: resetCaptcha } = useCaptcha()
   const fieldRefs = useRef<Record<EditableField, HTMLInputElement | HTMLTextAreaElement | null>>({
     name: null,
     email: null,
@@ -258,6 +264,8 @@ function ContactForm({
     setTouched({ name: false, email: false, message: false })
     setFormState('idle')
     setAnnouncement('')
+    setCaptchaError('')
+    resetCaptcha()
     renderedAt.current = Date.now()
   }
 
@@ -266,6 +274,8 @@ function ContactForm({
     setTopic('Hiring')
     setErrors({})
     setTouched({ name: false, email: false, message: false })
+    setCaptchaError('')
+    resetCaptcha()
   }
 
   function showSuccess(message: string) {
@@ -276,7 +286,6 @@ function ContactForm({
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    console.log('[ContactForm] handleSubmit fired, fields:', fields)
 
     if (fields.company.trim()) {
       showSuccess('Message sent.')
@@ -298,13 +307,26 @@ function ContactForm({
       return
     }
 
-    console.log('[ContactForm] elapsed ms:', Date.now() - renderedAt.current)
+    if (Date.now() - renderedAt.current < 3_000) return
+
+    if (captchaEnabled && !captchaToken) {
+      setCaptchaError('Please complete the CAPTCHA.')
+      return
+    }
+    setCaptchaError('')
+
+    if (submitCount >= SESSION_LIMIT) {
+      setFormState('error')
+      setAnnouncement('Too many submissions. Please email me directly.')
+      return
+    }
 
     const payload = {
       name: fields.name.trim(),
       email: fields.email.trim(),
       topic,
       message: fields.message.trim(),
+      ...(captchaEnabled && captchaToken ? { 'h-captcha-response': captchaToken } : {}),
     }
 
     setFormState('submitting')
@@ -312,26 +334,24 @@ function ContactForm({
 
     try {
       if (!formEndpoint) {
-        console.log('[Contact form mock]', payload)
         await new Promise((resolve) => window.setTimeout(resolve, 800))
       } else {
         const controller = new AbortController()
         const timeoutId = window.setTimeout(() => controller.abort(), 10_000)
         try {
-          const response = await fetch(formEndpoint, {
+          const response = await fetch(CONTACT_API, {
             method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-            },
+            headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
             signal: controller.signal,
           })
-          if (!response.ok) throw new Error(`Form endpoint returned ${response.status}`)
+          if (response.status === 429) throw new Error('rate-limited')
+          if (!response.ok) throw new Error(`status:${response.status}`)
         } finally {
           window.clearTimeout(timeoutId)
         }
       }
+      setSubmitCount((n) => n + 1)
       showSuccess('Message sent. Thanks for reaching out. I will reply by email.')
     } catch {
       setFormState('error')
@@ -434,6 +454,8 @@ function ContactForm({
             reduced={reduced}
           />
 
+          <CaptchaField containerRef={captchaRef} error={captchaError} />
+
           {formState === 'error' && (
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[#E5484D]/30 bg-red-50 p-3 text-sm text-[var(--body)] dark:bg-red-950/20">
               <p>Something went wrong. You can email me directly at {siteConfig.email}</p>
@@ -443,8 +465,7 @@ function ContactForm({
 
           <button
             type="submit"
-            disabled={formState === 'submitting'}
-            onClick={() => console.log('[ContactForm] button clicked, formState:', formState)}
+            disabled={formState === 'submitting' || submitCount >= SESSION_LIMIT}
             className="btn-shine flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-hover)] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {formState === 'submitting' ? (
