@@ -5,7 +5,7 @@ import { hero, siteConfig } from '@/data/content'
 import { useTypewriter } from '@/hooks/useTypewriter'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import StatsRow from '@/components/StatsRow'
-
+import indefinite from 'indefinite'
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const CHIPS = ['Web', 'API', 'Mobile', 'AI/LLM', 'Cloud', 'Network']
@@ -314,10 +314,10 @@ export default function HeroSection() {
               transition={{ delay: 0.85, duration: 0.4 }}
               className="flex items-center gap-2 h-8"
               aria-live="polite"
-              aria-label={`I'm a ${reduced ? hero.roles[0] : typed}`}
+              aria-label={`I'm  ${reduced ? hero.roles[0] : typed}`}
             >
               <span className="text-[17px] sm:text-[19px] font-medium text-[var(--body)]">
-                I'm a
+                I'm {indefinite(reduced ? hero.roles[0] : typed, { articleOnly: true })}
               </span>
               <span className="text-[17px] sm:text-[19px] font-semibold text-[var(--primary)]">
                 {reduced ? hero.roles[0] : typed}

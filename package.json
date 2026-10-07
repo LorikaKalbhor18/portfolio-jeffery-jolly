@@ -18,6 +18,7 @@
     "embla-carousel-autoplay": "^8.1.8",
     "embla-carousel-react": "^8.1.8",
     "framer-motion": "^11.3.0",
+    "indefinite": "^2.5.2",
     "lucide-react": "^0.400.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -25,6 +26,7 @@
     "react-router-dom": "^6.30.6"
   },
   "devDependencies": {
+    "@types/indefinite": "^2.3.4",
     "@types/node": "^26.6.3",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",

@@ -340,7 +340,7 @@ export const projects: Project[] = [
     description:
       'Cloud security testing covering configuration, access and exposure, with vulnerability assessment of what is reachable.',
     tags: ['Cloud Security', 'Configuration Review', 'Vulnerability Assessment'],
-    standard: 'Provider security guidance and common cloud benchmarks',
+    standard: 'Cloud service provider security guidance and common cloud benchmarks',
     overview:
       'Security testing of cloud environments, focused on configuration, access and exposure. The exact approach is agreed per engagement and depends on the provider and the permissions granted.',
     phases: [
