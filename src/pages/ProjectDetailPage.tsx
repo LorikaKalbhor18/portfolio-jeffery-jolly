@@ -224,7 +224,7 @@ function ProjectDetail({
                       jump(s.id)
                     }}
                     className={[
-                      'inline-block whitespace-nowrap px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors',
+                      'inline-flex h-9 min-h-9 items-center justify-center whitespace-nowrap px-3 rounded-full text-[13px] font-medium leading-none transition-colors',
                       activeSection === s.id
                         ? 'bg-[var(--primary)] text-white'
                         : 'bg-[var(--surface)] border border-[var(--border)] text-[var(--body)]',
@@ -298,12 +298,12 @@ function ProjectDetail({
           <div className="min-w-0 space-y-14">
             {/* Process */}
             <section id="process" className="scroll-mt-28">
-              <div className="flex items-end justify-between gap-4 mb-5">
+              <div className="flex items-center justify-between gap-4 mb-5">
                 <h2 className="text-2xl font-bold text-[var(--heading)] tracking-tight">Process</h2>
                 <button
                   type="button"
                   onClick={toggleAll}
-                  className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[12px] font-semibold text-[var(--body)] hover:text-[var(--primary)] hover:border-[var(--primary)]/40 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
+                  className="shrink-0 inline-flex h-9 min-h-9 items-center justify-center gap-1.5 px-3 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[12px] font-semibold leading-none text-[var(--body)] hover:text-[var(--primary)] hover:border-[var(--primary)]/40 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
                 >
                   {allOpen ? 'Collapse all' : 'Expand all'}
                 </button>

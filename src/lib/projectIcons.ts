@@ -1,4 +1,4 @@
-import { Globe, Webhook, Smartphone, Monitor, Cloud, Brain } from 'lucide-react'
+import { Globe, Webhook, Smartphone, Monitor, Cloud, Network, Brain } from 'lucide-react'
 import type { Project } from '@/data/projects'
 
 /** Maps the icon key in projects.ts to a Lucide component. */
@@ -8,6 +8,7 @@ const ICONS = {
   smartphone: Smartphone,
   monitor: Monitor,
   cloud: Cloud,
+  network: Network,
   brain: Brain,
 } as const
 

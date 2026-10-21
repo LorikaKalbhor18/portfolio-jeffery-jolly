@@ -16,7 +16,7 @@ export type ToolUse = {
 export type Project = {
   slug: string
   title: string
-  icon: 'globe' | 'api' | 'smartphone' | 'monitor' | 'cloud' | 'brain'
+  icon: 'globe' | 'api' | 'smartphone' | 'monitor' | 'cloud' | 'network' | 'brain'
   description: string
   tags: string[]
   standard: string
@@ -404,6 +404,82 @@ export const projects: Project[] = [
       { name: 'Nmap', use: 'Checking external exposure' },
       { name: 'Burp Suite', use: 'Testing web applications hosted in the cloud' },
       { name: 'Python', use: 'Scripts to automate analysis' },
+    ],
+    deliverables: commonDeliverables,
+  },
+  {
+    slug: 'infrastructure-security',
+    title: 'Infrastructure Security',
+    icon: 'network',
+    description:
+      'Network and host-level vulnerability assessments covering service exposure, patch levels, credential weaknesses and system hardening.',
+    tags: ['VAPT', 'Nmap', 'Tenable'],
+    standard: 'Vulnerability assessment and penetration testing methodology',
+    overview:
+      'Assessment of network hosts and services, focused on what is exposed, how it is configured and what known weaknesses are reachable. This covers internal and external environments as agreed per engagement.',
+    phases: [
+      {
+        title: 'Scope and planning',
+        summary: 'Agree what is covered and how testing will run.',
+        steps: [
+          'Confirm IP ranges, hosts and environments in scope',
+          'Agree testing windows and rules of engagement for active testing',
+          'Define escalation points for critical findings',
+        ],
+      },
+      {
+        title: 'Discovery and enumeration',
+        summary: 'Build an accurate picture of the attack surface.',
+        steps: [
+          'Discover live hosts and map the network',
+          'Enumerate open ports, services and versions',
+          'Identify operating systems and exposed management interfaces',
+        ],
+      },
+      {
+        title: 'Vulnerability assessment',
+        summary: 'Find known issues at scale, then confirm what matters.',
+        steps: [
+          'Run authenticated and unauthenticated scans with tuned profiles',
+          'Review patch levels and missing security updates',
+          'Triage results to remove false positives before testing deeper',
+        ],
+      },
+      {
+        title: 'Manual validation',
+        summary: 'Confirm which weaknesses can actually be exploited.',
+        steps: [
+          'Validate high-risk findings on reachable services',
+          'Test default and weak credentials where in scope',
+          'Check configuration weaknesses in exposed services',
+        ],
+      },
+      {
+        title: 'Hardening review',
+        summary: 'Check systems against an agreed baseline.',
+        steps: [
+          'Compare host and service configuration with the hardening baseline',
+          'Review access controls, patch management and logging posture',
+          'Note compensating controls where direct fixes are not possible',
+        ],
+      },
+      {
+        title: 'Reporting and retest',
+        summary: 'Turn findings into fixes.',
+        steps: [
+          'Rate each finding using CVSS v3.1 with asset criticality in mind',
+          'Write reproduction steps and remediation guidance',
+          'Retest after fixes to confirm closure',
+        ],
+      },
+    ],
+    tools: [
+      { name: 'Nmap', use: 'Host discovery and service enumeration' },
+      { name: 'Tenable.io', use: 'Authenticated and unauthenticated vulnerability scanning' },
+      { name: 'Metasploit', use: 'Validating exploitability of confirmed issues' },
+      { name: 'Hydra', use: 'Credential testing where it is in scope' },
+      { name: 'Wireshark', use: 'Analysing network traffic' },
+      { name: 'Python', use: 'Scripts to parse and automate analysis' },
     ],
     deliverables: commonDeliverables,
   },

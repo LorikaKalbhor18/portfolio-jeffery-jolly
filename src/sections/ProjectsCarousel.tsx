@@ -80,7 +80,7 @@ function ProjectCard({
         {project.description}
       </p>
 
-      <div className="flex flex-wrap gap-2 pt-1">
+      <div className="flex flex-wrap items-center gap-2 pt-1">
         {project.tags.map((tag) => (
           <span
             key={tag}
@@ -91,10 +91,12 @@ function ProjectCard({
         ))}
       </div>
 
-      <span className="inline-flex items-center gap-1.5 pt-1 text-[13px] font-semibold text-[var(--primary)]">
-        View methodology
-        <ArrowRight size={14} strokeWidth={2} aria-hidden="true" />
-      </span>
+      <div className="flex min-h-[28px] items-center">
+        <span className="inline-flex items-center gap-1.5 leading-none text-[13px] font-semibold text-[var(--primary)]">
+          View methodology
+          <ArrowRight size={14} strokeWidth={2} aria-hidden="true" className="shrink-0" />
+        </span>
+      </div>
 
       {/* The whole card is one real link so middle-click and keyboard work. */}
       <Link
